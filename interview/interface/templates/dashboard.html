@@ -1,0 +1,185 @@
+<!-- interface/templates/dashboard.html -->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+    <style>
+        .menu {
+            width: 20%;
+            min-width: 200px;
+            max-width: 300px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .content {
+            width: 80%;
+            padding: 20px;
+        }
+        .form-column {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Menu -->
+            <div class="col-md-3 menu">
+                <h2>Panel {X}</h2>
+                <!-- Panel members list -->
+                {% for panel_member in panel_members %}
+                <button type="button" class="btn btn-primary btn-block mb-2">{{ panel_member }}</button>
+                {% endfor %}
+                <hr>
+                <!-- Students list -->
+                <h2>Students</h2>
+                {% for student in students %}
+                <button type="button" class="btn btn-outline-primary btn-block mb-2">{{ student }}</button>
+                {% endfor %}
+            </div>
+            <!-- Content -->
+            <div class="col-md-9 content">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <!-- Logout Button -->
+                    <form method="post" action="logout" class="ml-auto">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger">Logout</button>
+                    </form>
+                    </div>
+                <h2>Student Information</h2>
+                
+                <!-- Student Photo -->
+                <img src="{% static 'images\dummy.jpeg' %}" class="img-fluid mb-3" alt="Student Photo" style="max-width: 200px;">
+                <!-- Other Information -->
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="studentName">Student Name</label>
+                        <input type="text" class="form-control" id="studentName" name="studentName" value="{{ student_info.student_name }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="btech">B.Tech Specialisation</label>
+                        <input type="text" class="form-control" id="btech" name="btech" value="{{ student_info.btech }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="gateScore">Gate Score</label>
+                        <input type="text" class="form-control" id="gateScore" name="gateScore" value="{{ student_info.gate_score }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="gateSubject">Gate Subject</label>
+                        <input type="text" class="form-control" id="gateSubject" name="gateSubject" value="{{ student_info.gate_subject }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="yearOfPassing">Year of Passing</label>
+                        <input type="text" class="form-control" id="yearOfPassing" name="yearOfPassing" value="{{ student_info.year_of_passing }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="currentlyEmployed">Currently Employed</label>
+                        <input type="text" class="form-control" id="currentlyEmployed" name="currentlyEmployed" value="{{ student_info.currently_employed }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="companyName">Company Name</label>
+                        <input type="text" class="form-control" id="companyName" name="companyName" value="{{ student_info.company_name }}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#writtenTestModal">Written Test Marks</button>
+                    </div>
+                </form>
+                <hr>
+                <!-- Marks form -->
+<h2>Enter Marks</h2>
+<form method="post" action="">
+    {% csrf_token %}
+    {% for panel_member in panel_members %}
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="{{ panel_member }}">{{ panel_member }}</label>
+                <input type="text" class="form-control" id="{{ panel_member }}" name="{{ panel_member }}">
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="form-group">
+                <label for="comment{{ forloop.counter }}">Comment</label>
+                <textarea class="form-control" id="comment{{ forloop.counter }}" name="comment{{ forloop.counter }}" rows="1"></textarea>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<!-- Written Test Modal -->
+<div class="modal fade" id="writtenTestModal" tabindex="-1" role="dialog" aria-labelledby="writtenTestModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="writtenTestModalLabel">Written Test Marks</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- Student Name -->
+        <h4>{{ student_info.student_name }}</h4>
+        <!-- Questions and Marks -->
+        <!-- Section 1 -->
+        <h5>Section 1</h5>
+        <div class="row">
+            <div class="col-md-7">
+                <!-- Questions -->
+                <ul>
+                    {% for question in section1_questions %}
+                    <li>{{ question }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-5">
+                <!-- Marks -->
+                <ul>
+                    {% for mark in section1_marks %}
+                    <li>{{ mark }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <!-- Section 2 -->
+        <h5>Section 2</h5>
+        <div class="row">
+            <div class="col-md-7">
+                <!-- Questions -->
+                <ul>
+                    {% for question in section2_questions %}
+                    <li>{{ question }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-5">
+                <!-- Marks -->
+                <ul>
+                    {% for mark in section2_marks %}
+                    <li>{{ mark }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <!-- Add more sections as needed -->
+      </div>
+    </div>
+  </div>
+</div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
